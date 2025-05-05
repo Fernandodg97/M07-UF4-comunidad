@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 @Service
 public class ComunidadService {
@@ -29,6 +31,9 @@ public class ComunidadService {
         // Procesar archivo de gastos
         List<Gasto> gastos = fileParser.parseGastos(gastosFile.getInputStream(), comunidad);
         
+        // Guardar gastos en la comunidad
+        comunidad.setGastos(gastos);
+        
         // Calcular cuotas
         calculadoraCuotas.calcularCuotas(comunidad, gastos);
         
@@ -43,6 +48,19 @@ public class ComunidadService {
     
     public Comunidad getComunidadActual() {
         return comunidadActual;
+    }
+    
+    /**
+     * Devuelve los propietarios ordenados por código
+     */
+    public List<Propietario> getPropietariosOrdenados() {
+        if (comunidadActual == null || comunidadActual.getPropietarios() == null) {
+            return new ArrayList<>();
+        }
+        
+        List<Propietario> propietariosOrdenados = new ArrayList<>(comunidadActual.getPropietarios());
+        propietariosOrdenados.sort(Comparator.comparing(Propietario::getCodigo));
+        return propietariosOrdenados;
     }
     
     public Map<Propietario, Map<Zona, BigDecimal>> calcularCuotasPorPropietario(Comunidad comunidad) {

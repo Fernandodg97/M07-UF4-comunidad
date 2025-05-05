@@ -82,11 +82,11 @@
                                 <tfoot class="table-dark">
                                     <tr>
                                         <td colspan="2" class="text-end"><strong>Totales:</strong></td>
-                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona.get(zona)}">
+                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
                                             <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
                                         </td>
                                         <td>
-                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral, 1, 2) + ' €'}"></strong>
+                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral != null ? comunidad.totalGeneral : 0, 1, 2) + ' €'}"></strong>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -115,7 +115,10 @@
                                             <span th:if="${propiedad.tipo == 'L'}">Local</span>
                                             <span th:if="${propiedad.tipo == 'G'}">Garaje</span>
                                         </td>
-                                        <td th:text="${propiedad.propietario.nombre}"></td>
+                                        <td>
+                                            <span th:if="${propiedad.propietario != null}" th:text="${propiedad.propietario.nombre}"></span>
+                                            <span th:unless="${propiedad.propietario != null}">Sin propietario</span>
+                                        </td>
                                         <td th:each="zona : ${comunidad.zonas}">
                                             <span th:if="${propiedad.cuotas != null && propiedad.cuotas.containsKey(zona)}" 
                                                   th:text="${#numbers.formatDecimal(propiedad.cuotas.get(zona), 1, 2) + ' €'}">
@@ -134,11 +137,11 @@
                                 <tfoot class="table-dark">
                                     <tr>
                                         <td colspan="3" class="text-end"><strong>Totales:</strong></td>
-                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona.get(zona)}">
+                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
                                             <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
                                         </td>
                                         <td>
-                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral, 1, 2) + ' €'}"></strong>
+                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral != null ? comunidad.totalGeneral : 0, 1, 2) + ' €'}"></strong>
                                         </td>
                                     </tr>
                                 </tfoot>

@@ -44,6 +44,7 @@
                     <div class="card-body">
                         <div class="row" th:object="${comunidad}">
                             <div class="col-md-6">
+                                <p><strong>Código:</strong> <span th:text="*{id}"></span></p>
                                 <p><strong>Nombre:</strong> <span th:text="*{nombre}"></span></p>
                                 <p><strong>Población:</strong> <span th:text="*{poblacion}"></span></p>
                             </div>
@@ -61,6 +62,7 @@
                                 <p><strong>Número de zonas:</strong> <span th:text="*{zonas.size()}"></span></p>
                                 <p><strong>Número de propiedades:</strong> <span th:text="*{propiedades.size()}"></span></p>
                                 <p><strong>Número de propietarios:</strong> <span th:text="*{propietarios.size()}"></span></p>
+                                <p><strong>Número de gastos:</strong> <span th:text="*{gastos != null ? gastos.size() : 0}"></span></p>
                             </div>
                             <div class="col-md-6" th:if="*{totalGeneral != null}">
                                 <p><strong>Importe total gastos:</strong> <span th:text="*{#numbers.formatDecimal(totalGeneral, 1, 2)} + ' €'"></span></p>

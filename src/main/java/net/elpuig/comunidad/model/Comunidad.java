@@ -13,6 +13,7 @@ public class Comunidad {
     private List<Zona> zonas;
     private List<Propiedad> propiedades;
     private List<Propietario> propietarios;
+    private List<Gasto> gastos;
     private Map<Zona, BigDecimal> totalesPorZona;
     private BigDecimal totalGeneral;
 }

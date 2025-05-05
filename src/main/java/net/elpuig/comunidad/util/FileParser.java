@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class FileParser {
@@ -13,6 +14,7 @@ public class FileParser {
         Comunidad comunidad = new Comunidad();
         Map<String, Zona> zonasMap = new HashMap<>();
         Map<String, Propietario> propietariosMap = new HashMap<>();
+        List<String> propiedadesLines = new ArrayList<>();
         
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
@@ -35,7 +37,8 @@ public class FileParser {
                         parseZonaLine(line, zonasMap);
                         break;
                     case "#Propietat":
-                        parsePropiedadLine(line, comunidad, zonasMap, propietariosMap);
+                        // Guardar líneas de propiedades para procesarlas después
+                        propiedadesLines.add(line);
                         break;
                     case "#Propietari":
                         parsePropietarioLine(line, propietariosMap);
@@ -44,9 +47,20 @@ public class FileParser {
             }
         }
         
-        // Actualizar las listas en la comunidad
+        // Actualizar las zonas y propietarios en la comunidad
         comunidad.setZonas(new ArrayList<>(zonasMap.values()));
-        comunidad.setPropietarios(new ArrayList<>(propietariosMap.values()));
+        
+        // Ordenar propietarios por código
+        List<Propietario> propietariosOrdenados = new ArrayList<>(propietariosMap.values());
+        propietariosOrdenados.sort(Comparator.comparing(Propietario::getCodigo));
+        comunidad.setPropietarios(propietariosOrdenados);
+        
+        comunidad.setPropiedades(new ArrayList<>());
+        
+        // Ahora procesar las propiedades una vez que tenemos todos los propietarios
+        for (String propiedadLine : propiedadesLines) {
+            parsePropiedadLine(propiedadLine, comunidad, zonasMap, propietariosMap);
+        }
         
         return comunidad;
     }
@@ -107,7 +121,26 @@ public class FileParser {
             propiedad.setPorcentajesZona(porcentajes);
             
             // Información adicional
-            propiedad.setInfoAdicional(parts[5] + (parts.length > 6 ? ";" + parts[6] : ""));
+            String infoAdicional = parts[5];
+            if (parts.length > 6) {
+                infoAdicional += ";" + parts[6];
+            }
+            
+            // Convertir HH y HNH a textos más descriptivos
+            if ("HH".equals(parts[5])) {
+                infoAdicional = "Habitaje habitual;" + (parts.length > 6 ? parts[6] : "");
+            } else if ("HNH".equals(parts[5])) {
+                infoAdicional = "Habitaje no habitual;" + (parts.length > 6 ? parts[6] : "");
+            } else if ("G".equals(propiedad.getTipo())) {
+                // Para garajes, convertir A/C en Abierta/Cerrada
+                if ("A".equals(parts[5])) {
+                    infoAdicional = "Abierta;" + (parts.length > 6 ? parts[6] : "");
+                } else if ("C".equals(parts[5])) {
+                    infoAdicional = "Cerrada;" + (parts.length > 6 ? parts[6] : "");
+                }
+            }
+            
+            propiedad.setInfoAdicional(infoAdicional);
             
             if (comunidad.getPropiedades() == null) {
                 comunidad.setPropiedades(new ArrayList<>());

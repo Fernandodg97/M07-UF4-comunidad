@@ -30,16 +30,31 @@ public class CalculadoraCuotas {
     }
     
     private void calcularRepartoProporcional(Zona zona, BigDecimal total, Comunidad comunidad) {
+        // Verificar que haya propiedades
+        if (comunidad.getPropiedades() == null || comunidad.getPropiedades().isEmpty()) {
+            return;
+        }
+        
         // Obtener todas las propiedades que tienen porcentaje en esta zona
         List<Propiedad> propiedadesConPorcentaje = comunidad.getPropiedades().stream()
-            .filter(p -> p.getPorcentajesZona().containsKey(zona))
+            .filter(p -> p.getPorcentajesZona() != null && p.getPorcentajesZona().containsKey(zona))
             .collect(Collectors.toList());
             
+        // Si no hay propiedades con porcentaje, no hay nada que hacer
+        if (propiedadesConPorcentaje.isEmpty()) {
+            return;
+        }
+        
         // Calcular el total de porcentajes para esta zona
         int totalPorcentajes = propiedadesConPorcentaje.stream()
             .mapToInt(p -> p.getPorcentajesZona().get(zona))
             .sum();
             
+        // Verificar que el total no sea cero
+        if (totalPorcentajes == 0) {
+            return;
+        }
+        
         // Calcular cuota por cada propiedad
         for (Propiedad propiedad : propiedadesConPorcentaje) {
             int porcentaje = propiedad.getPorcentajesZona().get(zona);
@@ -55,11 +70,21 @@ public class CalculadoraCuotas {
     }
     
     private void calcularRepartoIgualitario(Zona zona, BigDecimal total, Comunidad comunidad) {
+        // Verificar que haya propiedades
+        if (comunidad.getPropiedades() == null || comunidad.getPropiedades().isEmpty()) {
+            return;
+        }
+        
         // Obtener todas las propiedades que tienen porcentaje en esta zona
         List<Propiedad> propiedadesConPorcentaje = comunidad.getPropiedades().stream()
-            .filter(p -> p.getPorcentajesZona().containsKey(zona))
+            .filter(p -> p.getPorcentajesZona() != null && p.getPorcentajesZona().containsKey(zona))
             .collect(Collectors.toList());
             
+        // Si no hay propiedades con porcentaje, no hay nada que hacer
+        if (propiedadesConPorcentaje.isEmpty()) {
+            return;
+        }
+        
         // Calcular cuota igual para cada propiedad
         BigDecimal cuotaPorPropiedad = total.divide(
             new BigDecimal(propiedadesConPorcentaje.size()), 
@@ -83,12 +108,15 @@ public class CalculadoraCuotas {
         for (Propietario propietario : comunidad.getPropietarios()) {
             Map<Zona, BigDecimal> cuotasPropietario = new HashMap<>();
             
-            // Sumar las cuotas de todas sus propiedades
-            for (Propiedad propiedad : propietario.getPropiedades()) {
-                if (propiedad.getCuotas() != null) {
-                    propiedad.getCuotas().forEach((zona, cuota) -> {
-                        cuotasPropietario.merge(zona, cuota, BigDecimal::add);
-                    });
+            // Verificar que el propietario tenga propiedades
+            if (propietario.getPropiedades() != null && !propietario.getPropiedades().isEmpty()) {
+                // Sumar las cuotas de todas sus propiedades
+                for (Propiedad propiedad : propietario.getPropiedades()) {
+                    if (propiedad.getCuotas() != null) {
+                        propiedad.getCuotas().forEach((zona, cuota) -> {
+                            cuotasPropietario.merge(zona, cuota, BigDecimal::add);
+                        });
+                    }
                 }
             }
             
@@ -99,8 +127,16 @@ public class CalculadoraCuotas {
     }
     
     public void generarResumen(Comunidad comunidad, List<Gasto> gastos) {
+        // Verificar que haya gastos
+        if (gastos == null || gastos.isEmpty()) {
+            comunidad.setTotalesPorZona(new HashMap<>());
+            comunidad.setTotalGeneral(BigDecimal.ZERO);
+            return;
+        }
+        
         // Calcular totales por zona
         Map<Zona, BigDecimal> totalesPorZona = gastos.stream()
+            .filter(gasto -> gasto.getZona() != null) // Filtrar gastos sin zona
             .collect(Collectors.groupingBy(
                 Gasto::getZona,
                 Collectors.mapping(

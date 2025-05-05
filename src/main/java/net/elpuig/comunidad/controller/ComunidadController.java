@@ -54,7 +54,7 @@ public class ComunidadController {
         Comunidad comunidad = comunidadService.getComunidadActual();
         if (comunidad != null) {
             model.addAttribute("comunidad", comunidad);
-            model.addAttribute("propietarios", comunidad.getPropietarios());
+            model.addAttribute("propietarios", comunidadService.getPropietariosOrdenados());
             return "propietarios";
         }
         return "redirect:/";

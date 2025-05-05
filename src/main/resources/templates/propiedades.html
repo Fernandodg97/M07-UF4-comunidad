@@ -47,7 +47,8 @@
                                 <th>Código</th>
                                 <th>Tipo</th>
                                 <th>m²</th>
-                                <th>Propietario</th>
+                                <th>C.</th>
+                                <th>Nombre Propietario</th>
                                 <th>Porcentajes</th>
                                 <th>Información Adicional</th>
                             </tr>
@@ -63,14 +64,33 @@
                                 <td th:text="${propiedad.metrosCuadrados}"></td>
                                 <td>
                                     <span th:if="${propiedad.propietario != null}" 
-                                        th:text="${propiedad.propietario.codigo + ' - ' + propiedad.propietario.nombre}"></span>
+                                        th:text="${propiedad.propietario.codigo}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${propiedad.propietario != null}" 
+                                        th:text="${propiedad.propietario.nombre}"></span>
                                 </td>
                                 <td>
                                     <div th:each="entry : ${propiedad.porcentajesZona}">
                                         <span th:text="${entry.key.id + ': ' + entry.value + '%'}"></span>
                                     </div>
                                 </td>
-                                <td th:text="${propiedad.infoAdicional}"></td>
+                                <td>
+                                    <span th:if="${propiedad.infoAdicional != null}" 
+                                          th:with="info=${propiedad.infoAdicional.split(';')}">
+                                        <span th:text="${info[0]}"></span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'P'}">
+                                            - <span th:text="${info[1] + ' habitaciones'}"></span>
+                                        </span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'G'}">
+                                            - <span th:if="${info[1] == 'S'}">Con trastero</span>
+                                            <span th:if="${info[1] == 'N'}">Sin trastero</span>
+                                        </span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'L'}" 
+                                              th:text="${' - ' + info[1]}">
+                                        </span>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
