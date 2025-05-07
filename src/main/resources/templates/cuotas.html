@@ -58,6 +58,7 @@
                                     <tr>
                                         <th>Código</th>
                                         <th>Nombre</th>
+                                        <th>Porcentajes</th>
                                         <th th:each="zona : ${comunidad.zonas}">
                                             <span th:text="${zona.nombre}"></span>
                                         </th>
@@ -68,6 +69,14 @@
                                     <tr th:each="entry : ${cuotasPorPropietario}">
                                         <td th:text="${entry.key.codigo}"></td>
                                         <td th:text="${entry.key.nombre}"></td>
+                                        <td>
+                                            <div th:each="entryZona : ${entry.value}" class="mb-1">
+                                                <span th:with="zona=${entryZona.key}">
+                                                    <span th:text="${zona.nombre}"></span>
+                                                    <span th:text="${': ' + entryZona.value + '%'}"></span>
+                                                </span>
+                                            </div>
+                                        </td>
                                         <td th:each="zona : ${comunidad.zonas}">
                                             <span th:if="${entry.value.containsKey(zona)}" 
                                                   th:text="${#numbers.formatDecimal(entry.value.get(zona), 1, 2) + ' €'}">
@@ -83,7 +92,7 @@
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <td colspan="2" class="text-end"><strong>Totales:</strong></td>
+                                        <td colspan="3" class="text-end"><strong>Totales:</strong></td>
                                         <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
                                             <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
                                         </td>
@@ -105,6 +114,7 @@
                                         <th>Código</th>
                                         <th>Tipo</th>
                                         <th>Propietario</th>
+                                        <th>Porcentajes</th>
                                         <th th:each="zona : ${comunidad.zonas}">
                                             <span th:text="${zona.nombre}"></span>
                                         </th>
@@ -123,6 +133,14 @@
                                             <span th:if="${propiedad.propietario != null}" th:text="${propiedad.propietario.nombre}"></span>
                                             <span th:unless="${propiedad.propietario != null}">Sin propietario</span>
                                         </td>
+                                        <td>
+                                            <div th:each="entry : ${propiedad.porcentajesZona}" class="mb-1">
+                                                <span th:with="zona=${entry.key}">
+                                                    <span th:text="${zona.nombre}"></span>
+                                                    <span th:text="${': ' + entry.value + '%'}"></span>
+                                                </span>
+                                            </div>
+                                        </td>
                                         <td th:each="zona : ${comunidad.zonas}">
                                             <span th:if="${propiedad.cuotas != null && propiedad.cuotas.containsKey(zona)}" 
                                                   th:text="${#numbers.formatDecimal(propiedad.cuotas.get(zona), 1, 2) + ' €'}">
@@ -140,7 +158,7 @@
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <td colspan="3" class="text-end"><strong>Totales:</strong></td>
+                                        <td colspan="4" class="text-end"><strong>Totales:</strong></td>
                                         <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
                                             <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
                                         </td>

@@ -32,6 +32,8 @@ public class CalculadoraCuotas {
         
         // 2. Para cada zona, calcular reparto según su tipo
         gastosPorZona.forEach((zona, gastosZona) -> {
+            // System.out.println("Procesando zona: " + zona.getNombre() + 
+            //           " - Tipo reparto: " + zona.getTipoReparto());
             // Calcular el total de gastos para esta zona
             BigDecimal totalZona = gastosZona.stream()
                 .map(Gasto::getImporte)
@@ -84,7 +86,7 @@ public class CalculadoraCuotas {
         for (Propiedad propiedad : propiedadesConPorcentaje) {
             int porcentaje = propiedad.getPorcentajesZona().get(zona);
             BigDecimal cuota = total.multiply(new BigDecimal(porcentaje))
-                                  .divide(new BigDecimal(totalPorcentajes), 2, RoundingMode.HALF_UP);
+                                  .divide(new BigDecimal(totalPorcentajes), 2, RoundingMode.UP);
             
             // Actualizar la cuota en la propiedad
             if (propiedad.getCuotas() == null) {
