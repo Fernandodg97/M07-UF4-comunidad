@@ -7,20 +7,37 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Componente encargado de calcular las cuotas de la comunidad de propietarios.
+ * Esta clase implementa la lógica para:
+ * - Calcular cuotas por zona según el tipo de reparto (proporcional o igualitario)
+ * - Calcular cuotas por propietario
+ * - Generar resúmenes de gastos por zona y totales
+ */
 @Component
 public class CalculadoraCuotas {
     
+    /**
+     * Calcula las cuotas para todas las zonas de la comunidad.
+     * El cálculo se realiza agrupando los gastos por zona y aplicando el tipo de reparto
+     * correspondiente (proporcional o igualitario).
+     *
+     * @param comunidad La comunidad para la cual calcular las cuotas
+     * @param gastos Lista de gastos a repartir
+     */
     public void calcularCuotas(Comunidad comunidad, List<Gasto> gastos) {
         // 1. Agrupar gastos por zona
         Map<Zona, List<Gasto>> gastosPorZona = gastos.stream()
             .collect(Collectors.groupingBy(Gasto::getZona));
         
-        // 2. Para cada zona, calcular reparto
+        // 2. Para cada zona, calcular reparto según su tipo
         gastosPorZona.forEach((zona, gastosZona) -> {
+            // Calcular el total de gastos para esta zona
             BigDecimal totalZona = gastosZona.stream()
                 .map(Gasto::getImporte)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 
+            // Aplicar el tipo de reparto correspondiente
             if (zona.getTipoReparto() == 'P') {
                 calcularRepartoProporcional(zona, totalZona, comunidad);
             } else {
@@ -29,6 +46,14 @@ public class CalculadoraCuotas {
         });
     }
     
+    /**
+     * Calcula el reparto proporcional de los gastos de una zona entre las propiedades.
+     * El reparto se realiza según los porcentajes asignados a cada propiedad en la zona.
+     *
+     * @param zona Zona para la cual calcular el reparto
+     * @param total Importe total a repartir
+     * @param comunidad Comunidad a la que pertenece la zona
+     */
     private void calcularRepartoProporcional(Zona zona, BigDecimal total, Comunidad comunidad) {
         // Verificar que haya propiedades
         if (comunidad.getPropiedades() == null || comunidad.getPropiedades().isEmpty()) {
@@ -55,7 +80,7 @@ public class CalculadoraCuotas {
             return;
         }
         
-        // Calcular cuota por cada propiedad
+        // Calcular cuota por cada propiedad según su porcentaje
         for (Propiedad propiedad : propiedadesConPorcentaje) {
             int porcentaje = propiedad.getPorcentajesZona().get(zona);
             BigDecimal cuota = total.multiply(new BigDecimal(porcentaje))
@@ -69,6 +94,14 @@ public class CalculadoraCuotas {
         }
     }
     
+    /**
+     * Calcula el reparto igualitario de los gastos de una zona entre las propiedades.
+     * El importe total se divide equitativamente entre todas las propiedades de la zona.
+     *
+     * @param zona Zona para la cual calcular el reparto
+     * @param total Importe total a repartir
+     * @param comunidad Comunidad a la que pertenece la zona
+     */
     private void calcularRepartoIgualitario(Zona zona, BigDecimal total, Comunidad comunidad) {
         // Verificar que haya propiedades
         if (comunidad.getPropiedades() == null || comunidad.getPropiedades().isEmpty()) {
@@ -101,6 +134,13 @@ public class CalculadoraCuotas {
         }
     }
     
+    /**
+     * Calcula las cuotas totales por propietario, sumando las cuotas de todas sus propiedades.
+     * El resultado es un mapa que asocia cada propietario con sus cuotas por zona.
+     *
+     * @param comunidad Comunidad para la cual calcular las cuotas
+     * @return Mapa con las cuotas por propietario y zona
+     */
     public Map<Propietario, Map<Zona, BigDecimal>> calcularCuotasPorPropietario(Comunidad comunidad) {
         Map<Propietario, Map<Zona, BigDecimal>> cuotasPorPropietario = new HashMap<>();
         
@@ -126,6 +166,14 @@ public class CalculadoraCuotas {
         return cuotasPorPropietario;
     }
     
+    /**
+     * Genera un resumen de los gastos de la comunidad, calculando:
+     * - Totales por zona
+     * - Total general de gastos
+     *
+     * @param comunidad Comunidad para la cual generar el resumen
+     * @param gastos Lista de gastos a procesar
+     */
     public void generarResumen(Comunidad comunidad, List<Gasto> gastos) {
         // Verificar que haya gastos
         if (gastos == null || gastos.isEmpty()) {
