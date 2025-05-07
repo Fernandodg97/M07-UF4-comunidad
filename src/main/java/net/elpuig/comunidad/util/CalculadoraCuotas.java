@@ -124,7 +124,7 @@ public class CalculadoraCuotas {
         BigDecimal cuotaPorPropiedad = total.divide(
             new BigDecimal(propiedadesConPorcentaje.size()), 
             2, 
-            RoundingMode.HALF_UP
+            RoundingMode.UP
         );
         
         // Asignar cuota a cada propiedad
