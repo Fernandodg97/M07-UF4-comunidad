@@ -71,8 +71,11 @@
                                         th:text="${propiedad.propietario.nombre}"></span>
                                 </td>
                                 <td>
-                                    <div th:each="entry : ${propiedad.porcentajesZona}">
-                                        <span th:text="${entry.key.id + ': ' + entry.value + '%'}"></span>
+                                    <div th:each="entry : ${propiedad.porcentajesZona}" class="mb-1">
+                                        <span th:with="zona=${entry.key}">
+                                            <span th:text="${zona.nombre}"></span>
+                                            <span th:text="${': ' + entry.value + '%'}"></span>
+                                        </span>
                                     </div>
                                 </td>
                                 <td>

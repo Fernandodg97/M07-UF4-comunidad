@@ -24,18 +24,21 @@
             <div class="card-body">
                 <h3>Cargar datos de la comunidad</h3>
                 
-                <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <h5>Error al procesar archivos:</h5>
+                    <p th:text="${error}"></p>
+                </div>
                 
                 <form method="POST" action="/procesar" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="comunidadFile" class="form-label">Archivo comunidad</label>
+                        <label for="comunidadFile" class="form-label">Archivo comunidad:</label>
                         <input type="file" class="form-control" id="comunidadFile" name="comunidadFile" required>
-                        <small class="form-text text-muted">Archivo con datos de la comunidad, zonas, propiedades y propietarios.</small>
+                        <small class="form-text text-muted">Archivo con datos de la comunidad, zonas, propiedades y propietarios (admite archivos en catalán o castellano).</small>
                     </div>
                     <div class="form-group">
                         <label for="gastosFile" class="form-label">Archivo gastos:</label>
                         <input type="file" class="form-control" id="gastosFile" name="gastosFile" required>
-                        <small class="form-text text-muted">Archivo con los gastos de la comunidad.</small>
+                        <small class="form-text text-muted">Archivo con los gastos de la comunidad (admite archivos en catalán o castellano).</small>
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Procesar</button>

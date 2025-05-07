@@ -28,11 +28,41 @@ public class ComunidadController {
             Model model) {
         
         try {
+            // Verificar que los archivos no estén vacíos
+            if (comunidadFile.isEmpty()) {
+                model.addAttribute("error", "El archivo de comunidad está vacío");
+                return "upload";
+            }
+            
+            if (gastosFile.isEmpty()) {
+                model.addAttribute("error", "El archivo de gastos está vacío");
+                return "upload";
+            }
+            
+            // Verificar los nombres de archivo (opcional)
+            if (!comunidadFile.getOriginalFilename().toLowerCase().contains("comun") 
+                && !comunidadFile.getOriginalFilename().toLowerCase().contains("comuni")) {
+                model.addAttribute("error", "El archivo seleccionado no parece ser un archivo de comunidad válido");
+                return "upload";
+            }
+            
+            if (!gastosFile.getOriginalFilename().toLowerCase().contains("gast") 
+                && !gastosFile.getOriginalFilename().toLowerCase().contains("despes")) {
+                model.addAttribute("error", "El archivo seleccionado no parece ser un archivo de gastos válido");
+                return "upload";
+            }
+            
+            // Procesar archivos
             Comunidad comunidad = comunidadService.procesarArchivos(comunidadFile, gastosFile);
             model.addAttribute("comunidad", comunidad);
             return "resumen";
             
+        } catch (IllegalArgumentException e) {
+            // Error de formato de archivo
+            model.addAttribute("error", e.getMessage());
+            return "upload";
         } catch (Exception e) {
+            // Otro tipo de error
             model.addAttribute("error", "Error al procesar archivos: " + e.getMessage());
             return "upload";
         }

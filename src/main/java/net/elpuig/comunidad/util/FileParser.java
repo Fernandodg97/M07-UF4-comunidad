@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class FileParser {
@@ -15,6 +14,7 @@ public class FileParser {
         Map<String, Zona> zonasMap = new HashMap<>();
         Map<String, Propietario> propietariosMap = new HashMap<>();
         List<String> propiedadesLines = new ArrayList<>();
+        boolean formatoValido = false;
         
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
@@ -26,38 +26,44 @@ public class FileParser {
                 
                 if (line.startsWith("#")) {
                     currentSection = line;
+                    if ("#Comunitat".equals(currentSection) || "#Comunidad".equals(currentSection)) {
+                        formatoValido = true;
+                    }
                     continue;
                 }
                 
                 switch(currentSection) {
                     case "#Comunitat":
+                    case "#Comunidad":
                         parseComunidadLine(line, comunidad);
                         break;
                     case "#Zona":
                         parseZonaLine(line, zonasMap);
                         break;
                     case "#Propietat":
-                        // Guardar líneas de propiedades para procesarlas después
+                    case "#Propiedad":
                         propiedadesLines.add(line);
                         break;
                     case "#Propietari":
+                    case "#Propietario":
                         parsePropietarioLine(line, propietariosMap);
                         break;
                 }
             }
         }
         
-        // Actualizar las zonas y propietarios en la comunidad
+        if (!formatoValido) {
+            throw new IllegalArgumentException("El archivo de comunidad no tiene un formato válido.");
+        }
+        
         comunidad.setZonas(new ArrayList<>(zonasMap.values()));
         
-        // Ordenar propietarios por código
         List<Propietario> propietariosOrdenados = new ArrayList<>(propietariosMap.values());
         propietariosOrdenados.sort(Comparator.comparing(Propietario::getCodigo));
         comunidad.setPropietarios(propietariosOrdenados);
         
         comunidad.setPropiedades(new ArrayList<>());
         
-        // Ahora procesar las propiedades una vez que tenemos todos los propietarios
         for (String propiedadLine : propiedadesLines) {
             parsePropiedadLine(propiedadLine, comunidad, zonasMap, propietariosMap);
         }
@@ -95,7 +101,6 @@ public class FileParser {
             propiedad.setCodigo(parts[1]);
             propiedad.setMetrosCuadrados(Integer.parseInt(parts[2]));
             
-            // Asignar propietario
             String codigoPropietario = parts[3];
             Propietario propietario = propietariosMap.get(codigoPropietario);
             if (propietario != null) {
@@ -106,7 +111,6 @@ public class FileParser {
                 propietario.getPropiedades().add(propiedad);
             }
             
-            // Procesar porcentajes por zona
             Map<Zona, Integer> porcentajes = new HashMap<>();
             String[] porcentajesStr = parts[4].split(",");
             for (String porcentaje : porcentajesStr) {
@@ -120,19 +124,16 @@ public class FileParser {
             }
             propiedad.setPorcentajesZona(porcentajes);
             
-            // Información adicional
             String infoAdicional = parts[5];
             if (parts.length > 6) {
                 infoAdicional += ";" + parts[6];
             }
             
-            // Convertir HH y HNH a textos más descriptivos
             if ("HH".equals(parts[5])) {
                 infoAdicional = "Habitaje habitual;" + (parts.length > 6 ? parts[6] : "");
             } else if ("HNH".equals(parts[5])) {
                 infoAdicional = "Habitaje no habitual;" + (parts.length > 6 ? parts[6] : "");
             } else if ("G".equals(propiedad.getTipo())) {
-                // Para garajes, convertir A/C en Abierta/Cerrada
                 if ("A".equals(parts[5])) {
                     infoAdicional = "Abierta;" + (parts.length > 6 ? parts[6] : "");
                 } else if ("C".equals(parts[5])) {
@@ -166,24 +167,48 @@ public class FileParser {
         List<Gasto> gastos = new ArrayList<>();
         Map<String, Zona> zonasMap = new HashMap<>();
         comunidad.getZonas().forEach(zona -> zonasMap.put(zona.getId(), zona));
+        boolean formatoValido = false;
+        int lineasProcesadas = 0;
         
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) continue;
+                if (line.isEmpty()) continue;
+                
+                if (line.startsWith("#")) {
+                    if (line.startsWith("#Pressupost") || line.startsWith("#Presupuesto")) {
+                        formatoValido = true;
+                    }
+                    continue;
+                }
                 
                 String[] parts = line.split(";");
                 if (parts.length >= 4) {
+                    lineasProcesadas++;
                     Gasto gasto = new Gasto();
                     gasto.setId(parts[0]);
                     gasto.setDescripcion(parts[1]);
-                    gasto.setImporte(new BigDecimal(parts[2]));
-                    gasto.setZona(zonasMap.get(parts[3]));
+                    try {
+                        gasto.setImporte(new BigDecimal(parts[2]));
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Error en formato de importe para el gasto " + parts[0]);
+                    }
+                    
+                    Zona zona = zonasMap.get(parts[3]);
+                    if (zona == null) {
+                        throw new IllegalArgumentException("La zona " + parts[3] + " no existe para el gasto " + parts[0]);
+                    }
+                    gasto.setZona(zona);
                     gastos.add(gasto);
                 }
             }
         }
+        
+        if (!formatoValido && lineasProcesadas == 0) {
+            throw new IllegalArgumentException("El archivo de gastos no tiene un formato válido.");
+        }
+        
         return gastos;
     }
 }

@@ -1,10 +1,12 @@
 package net.elpuig.comunidad.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.util.Map;
 
 @Data
+@EqualsAndHashCode(exclude = {"propietario"})
 public class Propiedad {
     private String codigo;
     private int metrosCuadrados;
