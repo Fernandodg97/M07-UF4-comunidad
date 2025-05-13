@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propiedades de la Comunidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+        .nav-item {
+            margin-right: 10px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center">Propiedades de la Comunidad</h2>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resumen">Resumen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/propiedades">Propiedades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/propietarios">Propietarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cuotas">Cuotas</a>
+                    </li>
+                </ul>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>m²</th>
+                                <th>C.</th>
+                                <th>Nombre Propietario</th>
+                                <th>Porcentajes</th>
+                                <th>Información Adicional</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="propiedad : ${propiedades}">
+                                <td th:text="${propiedad.codigo}"></td>
+                                <td>
+                                    <span th:if="${propiedad.tipo == 'P'}">Piso</span>
+                                    <span th:if="${propiedad.tipo == 'L'}">Local</span>
+                                    <span th:if="${propiedad.tipo == 'G'}">Garaje</span>
+                                </td>
+                                <td th:text="${propiedad.metrosCuadrados}"></td>
+                                <td>
+                                    <span th:if="${propiedad.propietario != null}" 
+                                        th:text="${propiedad.propietario.codigo}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${propiedad.propietario != null}" 
+                                        th:text="${propiedad.propietario.nombre}"></span>
+                                </td>
+                                <td>
+                                    <div th:each="entry : ${propiedad.porcentajesZona}" class="mb-1">
+                                        <span th:with="zona=${entry.key}">
+                                            <span th:text="${zona.nombre}"></span>
+                                            <span th:text="${': ' + entry.value + '%'}"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:if="${propiedad.infoAdicional != null}" 
+                                          th:with="info=${propiedad.infoAdicional.split(';')}">
+                                        <span th:text="${info[0]}"></span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'P'}">
+                                            - <span th:text="${info[1] + ' habitaciones'}"></span>
+                                        </span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'G'}">
+                                            - <span th:if="${info[1] == 'S'}">Con trastero</span>
+                                            <span th:if="${info[1] == 'N'}">Sin trastero</span>
+                                        </span>
+                                        <span th:if="${info.length > 1 && propiedad.tipo == 'L'}" 
+                                              th:text="${' - ' + info[1]}">
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <span th:text="'Total: ' + ${propiedades.size()} + ' propiedades'"></span>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary">Volver a cargar archivos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

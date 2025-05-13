@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuotas de la Comunidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+        .nav-item {
+            margin-right: 10px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center">Cuotas de la Comunidad</h2>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resumen">Resumen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/propiedades">Propiedades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/propietarios">Propietarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/cuotas">Cuotas</a>
+                    </li>
+                </ul>
+                
+                <ul class="nav nav-pills mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="pill" href="#porPropiedades">Por Propiedades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="pill" href="#porPropietarios">Por Propietarios</a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    <!-- Cuotas por propietarios -->
+                    <div class="tab-pane fade" id="porPropietarios">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Porcentajes</th>
+                                        <th th:each="zona : ${comunidad.zonas}">
+                                            <span th:text="${zona.nombre}"></span>
+                                        </th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="entry : ${cuotasPorPropietario}">
+                                        <td th:text="${entry.key.codigo}"></td>
+                                        <td th:text="${entry.key.nombre}"></td>
+                                        <td>
+                                            <div th:each="entryZona : ${entry.value}" class="mb-1">
+                                                <span th:with="zona=${entryZona.key}">
+                                                    <span th:text="${zona.nombre}"></span>
+                                                    <span th:text="${': ' + entryZona.value + '%'}"></span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td th:each="zona : ${comunidad.zonas}">
+                                            <span th:if="${entry.value.containsKey(zona)}" 
+                                                  th:text="${#numbers.formatDecimal(entry.value.get(zona), 1, 2) + ' €'}">
+                                            </span>
+                                            <span th:unless="${entry.value.containsKey(zona)}">0.00 €</span>
+                                        </td>
+                                        <td>
+                                            <span th:with="total=${#aggregates.sum(entry.value.values())}"
+                                                  th:text="${#numbers.formatDecimal(total, 1, 2) + ' €'}">
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-dark">
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Totales:</strong></td>
+                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
+                                            <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
+                                        </td>
+                                        <td>
+                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral != null ? comunidad.totalGeneral : 0, 1, 2) + ' €'}"></strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Cuotas por propiedades -->
+                    <div class="tab-pane fade show active" id="porPropiedades">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Tipo</th>
+                                        <th>Propietario</th>
+                                        <th>Porcentajes</th>
+                                        <th th:each="zona : ${comunidad.zonas}">
+                                            <span th:text="${zona.nombre}"></span>
+                                        </th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="propiedad : ${comunidad.propiedades}">
+                                        <td th:text="${propiedad.codigo}"></td>
+                                        <td>
+                                            <span th:if="${propiedad.tipo == 'P'}">Piso</span>
+                                            <span th:if="${propiedad.tipo == 'L'}">Local</span>
+                                            <span th:if="${propiedad.tipo == 'G'}">Garaje</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${propiedad.propietario != null}" th:text="${propiedad.propietario.nombre}"></span>
+                                            <span th:unless="${propiedad.propietario != null}">Sin propietario</span>
+                                        </td>
+                                        <td>
+                                            <div th:each="entry : ${propiedad.porcentajesZona}" class="mb-1">
+                                                <span th:with="zona=${entry.key}">
+                                                    <span th:text="${zona.nombre}"></span>
+                                                    <span th:text="${': ' + entry.value + '%'}"></span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td th:each="zona : ${comunidad.zonas}">
+                                            <span th:if="${propiedad.cuotas != null && propiedad.cuotas.containsKey(zona)}" 
+                                                  th:text="${#numbers.formatDecimal(propiedad.cuotas.get(zona), 1, 2) + ' €'}">
+                                            </span>
+                                            <span th:unless="${propiedad.cuotas != null && propiedad.cuotas.containsKey(zona)}">0.00 €</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${propiedad.cuotas != null}" 
+                                                  th:with="total=${#aggregates.sum(propiedad.cuotas.values())}"
+                                                  th:text="${#numbers.formatDecimal(total, 1, 2) + ' €'}">
+                                            </span>
+                                            <span th:unless="${propiedad.cuotas != null}">0.00 €</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-dark">
+                                    <tr>
+                                        <td colspan="4" class="text-end"><strong>Totales:</strong></td>
+                                        <td th:each="zona : ${comunidad.zonas}" th:with="totalZona=${comunidad.totalesPorZona != null && comunidad.totalesPorZona.containsKey(zona) ? comunidad.totalesPorZona.get(zona) : 0}">
+                                            <strong th:text="${#numbers.formatDecimal(totalZona, 1, 2) + ' €'}"></strong>
+                                        </td>
+                                        <td>
+                                            <strong th:text="${#numbers.formatDecimal(comunidad.totalGeneral != null ? comunidad.totalGeneral : 0, 1, 2) + ' €'}"></strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary">Volver a cargar archivos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

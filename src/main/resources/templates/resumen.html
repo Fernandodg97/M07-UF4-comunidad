@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de la Comunidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .nav-item {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center">Resumen de la Comunidad</h2>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/resumen">Resumen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/propiedades">Propiedades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/propietarios">Propietarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cuotas">Cuotas</a>
+                    </li>
+                </ul>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Información de la Comunidad</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" th:object="${comunidad}">
+                            <div class="col-md-6">
+                                <p><strong>Código:</strong> <span th:text="*{id}"></span></p>
+                                <p><strong>Nombre:</strong> <span th:text="*{nombre}"></span></p>
+                                <p><strong>Población:</strong> <span th:text="*{poblacion}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Estadísticas</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" th:object="${comunidad}">
+                            <div class="col-md-6">
+                                <p><strong>Número de zonas:</strong> <span th:text="*{zonas.size()}"></span></p>
+                                <p><strong>Número de propiedades:</strong> <span th:text="*{propiedades.size()}"></span></p>
+                                <p><strong>Número de propietarios:</strong> <span th:text="*{propietarios.size()}"></span></p>
+                                <p><strong>Número de gastos:</strong> <span th:text="*{gastos != null ? gastos.size() : 0}"></span></p>
+                            </div>
+                            <div class="col-md-6" th:if="*{totalGeneral != null}">
+                                <p><strong>Importe total gastos:</strong> <span th:text="*{#numbers.formatDecimal(totalGeneral, 1, 2)} + ' €'"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary">Volver a cargar archivos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
