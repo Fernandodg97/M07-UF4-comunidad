@@ -14,6 +14,7 @@ Este es un proyecto web desarrollado con Spring Boot que forma parte del módulo
 - Lombok
 
 ## Estructura del Proyecto
+```
 src/
 ├── main/
 │ ├── java/
@@ -28,6 +29,7 @@ src/
 │ │ └── ServletInitializer.java
 │ └── resources/ # Recursos estáticos y plantillas
 └── test/ # Pruebas unitarias
+```
 
 ## Requisitos Previos
 - Java 21
