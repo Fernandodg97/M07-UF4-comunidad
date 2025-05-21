@@ -1,7 +1,7 @@
 # Arquitectura General de la Aplicación
 
-- [Clases PMG](./Diagrama%clases.png)
-- [Clases SVG](./Diagrama%clases.svg)
+![Clases PMG](./Diagrama-clases.png)
+- [Clases SVG](./Diagrama-clases.svg)
 
 ## 1. Arquitectura en Capas
 
