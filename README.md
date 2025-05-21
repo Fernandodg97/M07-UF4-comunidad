@@ -3,6 +3,9 @@
 ## Descripción
 Este es un proyecto web desarrollado con Spring Boot que forma parte del módulo M07 - UF4. El proyecto ha sido desarrollado por Fernando Diaz y Mouad Sedjari.
 
+
+[Documentación de arquitectura](./arquitectura.md)
+
 ## Tecnologías Utilizadas
 - Java 21
 - Spring Boot 3.4.5
