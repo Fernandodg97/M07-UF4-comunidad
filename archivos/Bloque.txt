@@ -1,0 +1,16 @@
+#Pressupost 2008
+L001;Llum Escala;56;E
+L002;Llum Garatge;36;G
+A001;Aigua Escala;30;E
+A002;Aigua Zona Comu;130;C
+AS01;Assegurança Escales;600;E
+S002;Assegurança Garatge;300;G
+S003;Assegurança Piscina;150;C
+LI01;Neteja Escala;1200;E
+LI02;Neteja Zona Comu;600;C
+REIX;Reixes Jardi;1500;C
+JARD;Jardiner;1500;C
+ANTE;Antena Comunitaria;700;C
+OB01;Obres Escala;3000;E
+
+ 

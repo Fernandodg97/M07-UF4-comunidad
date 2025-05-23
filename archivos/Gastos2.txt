@@ -1,0 +1,15 @@
+#Presupuesto 2023
+L001;Luz Escalera;65;E
+L002;Luz Garaje;40;G
+A001;Agua Escalera;35;E
+A002;Agua Zona Común;140;C
+AS01;Seguro Escalera;650;E
+S002;Seguro Garaje;320;G
+S003;Seguro Piscina;180;C
+LI01;Limpieza Escalera;1250;E
+LI02;Limpieza Zona Común;650;C
+REIX;Rejas Jardín;1600;J
+JARD;Jardinero;1600;J
+ANTE;Antena Comunitaria;750;C
+OB01;Obras Escalera;3500;E
+PISC;Mantenimiento Piscina;1200;C

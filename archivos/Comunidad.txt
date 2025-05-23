@@ -1,0 +1,46 @@
+#Comunidad
+01;Trébol;Barcelona
+
+#Zona
+E;Escalera;P
+G;Garaje;I
+C;Zona Común;I
+
+#Propiedad
+L;0-A;80;04;E-8;Banco Mundial;Banca
+L;0-B;90;05;E-9;Hércules;Seguros
+L;0-C;90;06;E-9;Caprabo;Alimentación
+P;1-A;90;07;E-9,C-12;VH;2
+P;1-B;100;08;E-10,C-14;VH;3
+P;1-C;100;09;E-10,C-14;VNH;3
+P;2-A;150;01;E-15,C-20;VH;4
+P;2-B;150;02;E-15,C-20;VH;4
+P;2-C;150;03;E-15,C-20;VNH;4
+G;P01;12;14;G-10;A;N
+G;P02;12;15;G-10;A;N
+G;P03;15;01;G-10;A;S
+G;P04;15;02;G-10;A;S
+G;P05;15;03;G-10;A;S
+G;P06;15;04;G-10;C;N
+G;P07;15;10;G-10;C;N
+G;P08;15;11;G-10;C;N
+G;P09;15;12;G-10;C;N
+G;P10;15;13;G-10;C;N
+
+#Propietario
+01;Jorge Salas;Alcorcón (Madrid);jsalas@cas.net
+02;Jaime Rodriguez;Sabadell (Barcelona);jrodriguez@ttt.net
+03;Nestor Crespo;Barcelona (Barcelona); ncrespo@qqq.net
+04;Maria Gutierrez;Barcelona (Barcelona);mgutierrez@yuy.net
+05;Miguel Palacios;Barcelona (Barcelona);mpalacios@cas.net
+06;Nuria Mas;Barcelona (Barcelona);nmas@ttt.net
+07;Ricardo Torres;Barcelona (Barcelona);rtorres@qqq.net
+08;Tomas Asensio;Barcelona (Barcelona);tasensio@yuy.net
+09;Enrique Alos;Barcelona (Barcelona);ealos@cas.net
+10;Pedro Navarra;Barcelona (Barcelona);pnavarra@sss.net
+11;Sergio Briban;Barcelona (Barcelona);sbriban@rrr.net
+12;Carlos Escudero;Barcelona (Barcelona);cescudero@lkj.net
+13;Ruben Palencia;Barcelona (Barcelona);rpalencia@ppp.net
+14;Paula Cabos;Barcelona (Barcelona);pcabos@cas.net
+15;Juan Tenorio;Barcelona (Barcelona);jtenorio@xxx.net
+.La presidenta de la comunidad del año 2008 es 04 Maria Gutierrez
